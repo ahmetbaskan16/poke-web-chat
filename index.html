@@ -79,19 +79,13 @@
             background-color: #93c5fd;
             cursor: not-allowed;
         }
-        .status {
-            font-size: 0.75rem;
-            text-align: center;
-            color: #6b7280;
-            margin-bottom: 0.5rem;
-        }
     </style>
 </head>
 <body>
     <div class="chat-container">
         <div class="p-4 border-bottom bg-blue-50 rounded-t-xl flex items-center justify-between">
             <h1 class="text-xl font-bold text-blue-800">Poke Chat</h1>
-            <span id="connection-status" class="text-xs text-green-600 font-medium">Ready</span>
+            <span id="connection-status" class="text-xs text-green-600 font-medium">Ready (via Proxy)</span>
         </div>
         <div id="messages" class="messages">
             <div class="message poke">Hi Eymen! I'm your Poke assistant. How can I help you today?</div>
@@ -104,9 +98,6 @@
     </div>
 
     <script>
-        const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhNDE4NWE1OS1hZjAwLTQ4NmQtOWI4OS03NTZjNTU1N2EyMmYiLCJqdGkiOiJmNDA2YjBmNS1jMzNkLTRlN2MtOWVjNy03ZWMxYzBhOGFhNTEiLCJpYXQiOjE3ODA4Nzc1MDcsImV4cCI6MjA5NjIzNzUwN30.LeNmPDgBoQl_r3xgun10jT0ZoKKz881T5eqyVy0B1a8';
-        const API_URL = 'https://poke.com/api/v1/inbound/api-message';
-
         const messagesContainer = document.getElementById('messages');
         const chatForm = document.getElementById('chat-form');
         const userInput = document.getElementById('user-input');
@@ -134,10 +125,10 @@
             typingIndicator.classList.remove('hidden');
 
             try {
-                const response = await fetch(API_URL, {
+                // Use the relative path to our Vercel serverless function proxy
+                const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ message: message }),
@@ -152,7 +143,7 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                addMessage('Error: Could not connect to Poke.', 'poke');
+                addMessage('Error: Could not connect to Poke via the backend proxy.', 'poke');
             } finally {
                 userInput.disabled = false;
                 sendButton.disabled = false;
