@@ -1,9 +1,12 @@
+import fetch from 'node-fetch';
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, message: 'Method not allowed' });
   }
 
-  const { message } = req.body;
+  // Vercel body parsing check
+  const message = req.body && req.body.message;
   if (!message) {
     return res.status(400).json({ success: false, message: 'Message is required' });
   }
@@ -24,6 +27,7 @@ export default async function handler(req, res) {
     const data = await response.json();
     return res.status(response.status).json(data);
   } catch (error) {
+    console.error('Fetch error:', error);
     return res.status(500).json({ success: false, message: 'Proxy Error: ' + error.message });
   }
 }
