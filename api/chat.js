@@ -5,7 +5,7 @@ module.exports = async (req, res) => {
     return res.status(405).json({ success: false, message: 'Method not allowed' });
   }
 
-  const { message } = req.body;
+  const { message } = req.body || {};
   if (!message) {
     return res.status(400).json({ success: false, message: 'Message is required' });
   }
@@ -25,21 +25,31 @@ module.exports = async (req, res) => {
       'Authorization': `Bearer ${API_KEY}`,
       'Content-Type': 'application/json',
       'Content-Length': Buffer.byteLength(postData)
-    }
+    },
+    timeout: 10000
   };
 
   try {
     const pokeRes = await new Promise((resolve, reject) => {
       const request = https.request(options, (response) => {
         let body = '';
+        response.setEncoding('utf8');
         response.on('data', (chunk) => body += chunk);
-        response.on('end', () => resolve({
-          status: response.statusCode,
-          data: JSON.parse(body)
-        }));
+        response.on('end', () => {
+          try {
+            const parsed = JSON.parse(body);
+            resolve({ status: response.statusCode, data: parsed });
+          } catch (e) {
+            resolve({ status: response.statusCode, data: { success: false, message: 'Invalid response from Poke' } });
+          }
+        });
       });
 
       request.on('error', (e) => reject(e));
+      request.on('timeout', () => {
+        request.destroy();
+        reject(new Error('Request to Poke timed out'));
+      });
       request.write(postData);
       request.end();
     });
@@ -47,6 +57,6 @@ module.exports = async (req, res) => {
     return res.status(pokeRes.status).json(pokeRes.data);
   } catch (error) {
     console.error('Proxy Error:', error);
-    return res.status(500).json({ success: false, message: 'Error connecting to Poke via proxy' });
+    return res.status(500).json({ success: false, message: error.message || 'Error connecting to Poke' });
   }
 };
