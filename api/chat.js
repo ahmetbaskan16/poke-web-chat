@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, message: 'Message is required' });
   }
 
-  const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhNDE4NWE1OS1hZjAwLTQ4NmQtOWI4OS03NTZjNTU1N2EyMmYiLCJqdGkiOiJmNDA2YjBmNS1jMzNkLTRlN2MtOWVjNy03ZWMxYzBhOGFhNTEiLCJpYXQiOjE3ODA4Nzc1MDcsImV4cCI6MjA5NjIzNzUwN30.LeNmPDgBoQl_r3xgun10jT0ZoKKz881T5eqyVy0B1a8';
+  const API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhNDE4NWE1OS1hZjAwLTQ4NmQtOWI4OS03NTZjNTU1N2EyMmYiLCJqdGkiOiJjNWNmMjE1NC1lOGQ2LTRjYjctYjIxZS02YzA4YTcyN2JmYzUiLCJpYXQiOjE3ODEwMTYwODcsImV4cCI6MjA5NjM3NjA4N30.uC1Ldn2Y_vh8PIj5Ph3SvL2s-Gn8IhRwqnFCt7yPOsA';
   const POKE_URL = 'https://poke.com/api/v1/inbound/api-message';
 
   try {
